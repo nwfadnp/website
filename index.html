@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Northwest Fire & Ambulance District</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --red:    #C0272D;
+      --dark:   #0F0F0F;
+      --ash:    #1C1C1C;
+      --steel:  #2E2E2E;
+      --smoke:  #A0A0A0;
+      --white:  #F5F0EB;
+      --gold:   #E8A020;
+    }
+
+    body {
+      background: var(--dark);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── hero ── */
+    .hero {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 60px;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 1px;
+      background: linear-gradient(90deg, transparent, var(--red), transparent);
+    }
+
+    /* Maltese cross SVG background watermark */
+    .cross-bg {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 420px; height: 420px;
+      opacity: 0.04;
+      pointer-events: none;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--red);
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 2px;
+      margin-bottom: 28px;
+      animation: fadeDown 0.6s ease both;
+    }
+
+    .badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: #fff;
+      animation: pulse 1.8s ease infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50%       { opacity: 0.4; transform: scale(0.7); }
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 10vw, 100px);
+      line-height: 0.92;
+      letter-spacing: 0.02em;
+      color: var(--white);
+      animation: fadeDown 0.7s 0.1s ease both;
+    }
+
+    h1 span { color: var(--red); }
+
+    .subtitle {
+      margin-top: 18px;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--smoke);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      animation: fadeDown 0.7s 0.2s ease both;
+    }
+
+    /* ── emergency strip ── */
+    .emergency {
+      background: var(--red);
+      padding: 18px 24px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+      animation: fadeDown 0.7s 0.3s ease both;
+    }
+
+    .emergency p {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .emergency a {
+      color: #fff;
+      text-decoration: none;
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.06em;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+
+    /* ── cards grid ── */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      padding: 2px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.8s 0.4s ease both;
+    }
+
+    .card {
+      background: var(--ash);
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.25s;
+    }
+
+    .card:hover { background: var(--steel); }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 0;
+      background: var(--red);
+      transition: height 0.35s ease;
+    }
+
+    .card:hover::before { height: 100%; }
+
+    .card-icon {
+      font-size: 28px;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    .card-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--smoke);
+      margin-bottom: 10px;
+    }
+
+    .card-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      letter-spacing: 0.04em;
+      color: var(--white);
+    }
+
+    .card-value a {
+      color: inherit;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .card-value a:hover { color: var(--gold); }
+
+    .card-sub {
+      font-size: 12px;
+      color: var(--smoke);
+      margin-top: 6px;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    /* ── leadership ── */
+    .section-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      color: var(--smoke);
+      text-transform: uppercase;
+      padding: 40px 36px 20px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .officers {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2px;
+      padding: 0 2px 2px;
+      position: relative;
+      z-index: 1;
+      animation: fadeUp 0.8s 0.55s ease both;
+    }
+
+    .officer-card {
+      background: var(--ash);
+      padding: 28px 32px;
+      border-bottom: 2px solid transparent;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .officer-card:hover {
+      background: var(--steel);
+      border-bottom-color: var(--gold);
+    }
+
+    .officer-title {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--red);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .officer-name {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+      color: var(--white);
+    }
+
+    /* ── social / footer ── */
+    .footer {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      padding: 32px 36px;
+      border-top: 1px solid var(--steel);
+      position: relative;
+      z-index: 1;
+      gap: 16px;
+      animation: fadeUp 0.8s 0.65s ease both;
+    }
+
+    .footer-left {
+      font-size: 12px;
+      color: var(--smoke);
+      font-weight: 300;
+    }
+
+    .fb-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #1877F2;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: opacity 0.2s;
+    }
+
+    .fb-link:hover { opacity: 0.85; }
+
+    /* ── animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-18px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- hero -->
+  <header class="hero">
+    <!-- Maltese cross watermark -->
+    <svg class="cross-bg" viewBox="0 0 200 200" fill="white" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="
+        100,5  115,45 145,20 120,55
+        195,70 155,85 180,100
+        155,115 195,130 120,145
+        145,180 115,155 100,195
+        85,155  55,180  80,145
+        5,130   45,115  20,100
+        45,85   5,70    80,55
+        55,20   85,45"/>
+    </svg>
+
+    <div class="badge">
+      <span class="badge-dot"></span>
+      Serving New Paris, Ohio
+    </div>
+    <h1>Northwest<br/><span>Fire &amp; EMS</span></h1>
+    <p class="subtitle">New Paris, Ohio &nbsp;·&nbsp; Preble County &nbsp;·&nbsp; Volunteer District</p>
+  </header>
+
+  <!-- emergency bar -->
+  <div class="emergency">
+    <p>🚨 For emergencies always call <a href="tel:911">911</a></p>
+  </div>
+
+  <!-- contact cards -->
+  <div class="grid">
+
+    <div class="card">
+      <span class="card-icon">📞</span>
+      <div class="card-label">Non-Emergency Phone</div>
+      <div class="card-value"><a href="tel:9374378354">(937) 437-8354</a></div>
+      <div class="card-sub">Mon – Fri &nbsp;9:00 AM – 3:00 PM</div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">📍</span>
+      <div class="card-label">Station Address</div>
+      <div class="card-value"><a href="https://maps.google.com/?q=135+N+Washington+St+New+Paris+OH+45347" target="_blank">135 N. Washington St</a></div>
+      <div class="card-sub">New Paris, OH 45347<br/>Preble County</div>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">🔵</span>
+      <div class="card-label">Facebook</div>
+      <div class="card-value"><a href="https://www.facebook.com/Northwest.Fire.EMS/" target="_blank">@Northwest.Fire.EMS</a></div>
+      <div class="card-sub">News, updates &amp; community info</div>
+    </div>
+
+  </div>
+
+  <!-- leadership -->
+  <div class="section-title">District Officers</div>
+  <div class="officers">
+
+    <div class="officer-card">
+      <div class="officer-title">Chief</div>
+      <div class="officer-name">Paul Cones</div>
+    </div>
+
+    <div class="officer-card">
+      <div class="officer-title">Assistant Chief</div>
+      <div class="officer-name">Brad Simpson</div>
+    </div>
+
+    <div class="officer-card">
+      <div class="officer-title">Fire Captain</div>
+      <div class="officer-name">Tyler Jordan</div>
+    </div>
+
+    <div class="officer-card">
+      <div class="officer-title">EMS Captain</div>
+      <div class="officer-name">Donna Sheppard</div>
+    </div>
+
+  </div>
+
+  <!-- footer -->
+  <footer class="footer">
+    <div class="footer-left">
+      Northwest Fire &amp; Ambulance District &nbsp;·&nbsp; New Paris, OH 45347<br/>
+      Volunteer Organization &nbsp;·&nbsp; Preble County
+    </div>
+    <a class="fb-link" href="https://www.facebook.com/Northwest.Fire.EMS/" target="_blank">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><path d="M22 12a10 10 0 10-11.563 9.88v-6.988H7.9V12h2.537V9.797c0-2.506 1.493-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.892h-2.33V21.88A10.003 10.003 0 0022 12z"/></svg>
+      Follow on Facebook
+    </a>
+  </footer>
+
+</body>
+</html>
